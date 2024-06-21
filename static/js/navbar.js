@@ -1,44 +1,26 @@
-/* 
- * Copyright (c) 2021-2024 SigScalr, Inc.
- *
- * This file is part of SigLens Observability Solution
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 let navbarComponent = `
     <div>
         <div class="menu logo" title="">
-            <a href="./index.html" class="nav-links"><img class="sslogo" src="./assets/siglens-logo.svg">
-            </a>
+            <a href="./index.html" class="nav-links"><img class="sslogo" src="./assets/siglens-logo.svg"></a>
         </div>
-     
         <div class="menu nav-search" title="Logs">
-            <a href="./index.html" class="nav-links"><span class="icon-search"></span><span
-                    class="nav-link-text">Logs</span></a>
+            <a href="./index.html" class="nav-links"><span class="icon-search"></span><span class="nav-link-text">Logs</span></a>
         </div>
         <div class="menu nav-traces" title="Tracing">
-            <a href="./service-health.html" class="nav-links"><span class="icon-traces"></span><span
-                    class="nav-link-text">Tracing</span></a>
-         </div>
-        <div class="menu nav-metrics" title="Metrics">
-            <a href="./metrics-explorer.html" class="nav-links"><span class="icon-metrics"></span><span
-                    class="nav-link-text">Metrics</span></a>
+            <a href="./service-health.html" class="nav-links"><span class="icon-traces"></span><span class="nav-link-text">Tracing</span></a>
+        </div>
+        <div class="menu nav-metrics metrics-dropdown-toggle" title="Metrics" style="display:flex;flex-direction:row">
+            <a class="nav-links">
+                <span class="icon-metrics"></span>
+                <span class="nav-link-text">Metrics</span>
+            </a>
+            <ul class="metrics-dropdown">
+                <a href="./metrics-explorer.html"><li class="di">Explorer</li></a>
+                <a href="./metric-summary.html"><li class="di">Summary</li></a>
+            </ul>
         </div>
         <div class="menu nav-slos" title="SLOs">
-            <a href="./all-slos.html" class="nav-links"><span class="icon-live"></span><span
-                    class="nav-link-text">SLOs</span></a>
+            <a href="./all-slos.html" class="nav-links"><span class="icon-live"></span><span class="nav-link-text">SLOs</span></a>
         </div>
         <div class="menu nav-alerts" title="Alerting">
             <a href="./all-alerts.html" class="nav-links"><span class="icon-alerts"></span><span class="nav-link-text">Alerting</span></a>
@@ -48,20 +30,16 @@ let navbarComponent = `
                 <span class="icon-launchdb"></span><span class="nav-link-text">Dashboards</span></a>
         </div>
         <div class="menu nav-minion" title="Minion Searches">
-            <a href="./minion-searches.html" class="nav-links"><span class="icon-minion"></span><span
-                    class="nav-link-text">Minion</span></a>
+            <a href="./minion-searches.html" class="nav-links"><span class="icon-minion"></span><span class="nav-link-text">Minion</span></a>
         </div>
         <div class="menu nav-usq" title="Saved Queries">
-            <a href="./saved-queries.html" class="nav-links"><span class="icon-usq"></span><span
-                    class="nav-link-text">Saved Queries</span></a>
+            <a href="./saved-queries.html" class="nav-links"><span class="icon-usq"></span><span class="nav-link-text">Saved Queries</span></a>
         </div>
         <div class="menu nav-myorg" title="My Org">
-            <a href="./cluster-stats.html" class="nav-links"><span class="icon-myorg"></span><span
-                    class="nav-link-text">My Org</span></a>
+            <a href="./cluster-stats.html" class="nav-links"><span class="icon-myorg"></span><span class="nav-link-text">My Org</span></a>
         </div>
         <div class="menu nav-ingest" title="Ingestion">
-            <a href="./test-data.html" class="nav-links"><span class="icon-ingest"></span><span
-                    class="nav-link-text">Ingestion</span></a>
+            <a href="./test-data.html" class="nav-links"><span class="icon-ingest"></span><span class="nav-link-text">Ingestion</span></a>
         </div>
     </div>
     <div>
@@ -79,9 +57,7 @@ let navbarComponent = `
         </div>
         <div class="position-relative mb-2">
             <div class="nav-help" title="Help & Support">
-                <a href="#" class="nav-links"><span class="icon-help"> </span>
-
-                    <span class="nav-link-text">Help & Support</span></a>
+                <a href="#" class="nav-links"><span class="icon-help"></span><span class="nav-link-text">Help & Support</span></a>
             </div>
             <div class="help-options">
                 <div class="menu nav-docs" title="SigLens Documentation">
@@ -107,7 +83,7 @@ let navbarComponent = `
             </div>
         </div>
     </div>
-`
+`;
 
 let orgUpperNavTabs = [
     { name: 'Cluster Stats', url: './cluster-stats.html', class: 'cluster-stats' },
@@ -147,30 +123,35 @@ $(document).ready(function () {
         ".nav-traces",
         ".nav-ingest",
     ];
-    navItems.forEach((item) => $(item).removeClass("active"));
+    
+    const removeActiveClasses = () => {
+        navItems.forEach((item) => $(item).removeClass("active"));
+    };
 
     if (currentUrl.includes("index.html")) {
         $(".nav-search").addClass("active");
     } else if (currentUrl.includes("metrics-explorer.html")) {
         $(".nav-metrics").addClass("active");
+    } else if (currentUrl.includes("metric-summary.html")) {
+        $(".nav-metrics").addClass("active");
     } else if (currentUrl.includes("dashboards-home.html") || currentUrl.includes("dashboard.html")) {
         $(".nav-ldb").addClass("active");
     } else if (currentUrl.includes("saved-queries.html")) {
         $(".nav-usq").addClass("active");
-    } else if (currentUrl.includes("alerts.html") || currentUrl.includes("alert.html") || currentUrl.includes("alert-details.html")   || currentUrl.includes("contacts.html")){
+    } else if (currentUrl.includes("alerts.html") || currentUrl.includes("alert.html") || currentUrl.includes("alert-details.html") || currentUrl.includes("contacts.html")){
         $(".nav-alerts").addClass("active");
         $('.alerts-nav-tab').appendOrgNavTabs("Alerting", alertsUpperNavTabs);
     } else if (currentUrl.includes("all-slos.html")){
         $(".nav-slos").addClass("active");
-        $('.alerts-nav-tab').appendOrgNavTabs("SLOs",[]);
-    } else if (currentUrl.includes("cluster-stats.html")|| currentUrl.includes("org-settings.html") || currentUrl.includes("application-version.html") {{ .OrgUpperNavUrls}} ) {
+        $('.alerts-nav-tab').appendOrgNavTabs("SLOs", []);
+    } else if (currentUrl.includes("cluster-stats.html") || currentUrl.includes("org-settings.html") || currentUrl.includes("application-version.html") {{ .OrgUpperNavUrls}}) {
         $(".nav-myorg").addClass("active");
         $('.org-nav-tab').appendOrgNavTabs("My Org", orgUpperNavTabs);
     } else if (currentUrl.includes("minion-searches.html")) {
         $(".nav-minion").addClass("active");
     } else if (currentUrl.includes("live-tail.html")) {
         $(".nav-live").addClass("active");
-    } else if (currentUrl.includes("service-health.html")|| currentUrl.includes("service-health-overview.html") || currentUrl.includes("dependency-graph.html")|| currentUrl.includes("search-traces.html")) {
+    } else if (currentUrl.includes("service-health.html") || currentUrl.includes("service-health-overview.html") || currentUrl.includes("dependency-graph.html") || currentUrl.includes("search-traces.html")) {
         $(".nav-traces").addClass("active");
         if ($('.subsection-navbar').length) {
             $('.subsection-navbar').appendOrgNavTabs("Tracing", tracingUpperNavTabs);
@@ -186,10 +167,23 @@ $(document).ready(function () {
         $(".help-options").slideToggle(200);
     });
 
+    $(".metrics-dropdown-toggle").click(function (event) {
+        event.stopPropagation();
+        $(".metrics-dropdown").toggle();
+        removeActiveClasses(); // Remove active class from all other nav items
+        $(".nav-metrics").addClass("active"); // Add active class when metrics dropdown is clicked
+    });
+
     $(document).on("click", function(event) {
         var helpOptions = $(".help-options");
-        var menu = $(".nav-help");
+        var metricsDropdown = $(".metrics-dropdown");
+        var metricsToggle = $(".metrics-dropdown-toggle");
+
+        if (!metricsToggle.is(event.target) && !metricsDropdown.is(event.target) && metricsDropdown.has(event.target).length === 0) {
+            metricsDropdown.hide();
+        }
         
+        var menu = $(".nav-help");
         if (!menu.is(event.target) && !helpOptions.is(event.target) && helpOptions.has(event.target).length === 0) {
             helpOptions.slideUp(200);
         }
@@ -198,6 +192,17 @@ $(document).ready(function () {
     $(".help-options").on("click", "a", function(event) {
         $(".help-options").slideUp(200);
     });
+
+    const currentLocation = window.location.href;
+    const menuItem = document.querySelectorAll('.metrics-dropdown a');
+    menuItem.forEach(item => {
+        if (item.href === currentLocation) {
+            item.classList.add('active');
+        }
+    });
+
+    $(".metrics-dropdown a").on("click", function() {
+        removeActiveClasses(); // Remove active class from all other nav items
+        $(".nav-metrics").addClass("active");
+    });
 });
-
-
